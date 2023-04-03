@@ -17,10 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 # from django.conf.urls import urls
 from file.views import FileView
-from users.views import UserView
+from users.views import UserView, LogInView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', FileView.as_view(), name="anything "),
-    path('user', UserView.as_view(), name="users ")
+    path('signup', UserView.as_view(), name="users "),
+    path('login', LogInView.as_view(), name="login ")
 ]
