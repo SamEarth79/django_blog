@@ -34,7 +34,7 @@ def validateCredentials(data):
     if currUser.password != data['password']:
         return False, "Invalid Credentials"
 
-    return True, ""
+    return True, currUser
 
 
 class UserView(APIView):
@@ -57,6 +57,15 @@ class UserView(APIView):
             serializer.save()
             return Response({"allGood": "success", "data": serializer.data}, status=status.HTTP_200_OK)
 
+    def put(self, request):
+        serializer = UserSerializer(data=request.data)
+        User.objects.filter(request.data['email']).update(
+            phone=request.data['phone'])
+
+        print(User.objects.all().values())
+        if serializer.is_valid(raise_exception=True):
+            return Response({"allGood": "success", "data": serializer.data, "currUser": {"email": request.data.email, "phone": request.data.phone}}, status=status.HTTP_200_OK)
+
 
 class LogInView(APIView):
 
@@ -76,4 +85,4 @@ class LogInView(APIView):
             return Response({"allGood": "error", "data": returnMsg}, status=status.HTTP_400_BAD_REQUEST)
 
         if serializer.is_valid(raise_exception=True):
-            return Response({"allGood": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+            return Response({"allGood": "success", "data": serializer.data, "currUser": {"email": msg.email, "phone": msg.phone}}, status=status.HTTP_200_OK)

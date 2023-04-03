@@ -2,7 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
+import Portal from "./pages/Portal";
+import Profile from "./pages/Profile";
 import Signup from "./pages/Signup";
+import { useSelector } from "react-redux";
 
 function App() {
     const [files, setFiles] = useState([]);
@@ -45,11 +48,15 @@ function App() {
         fetchData();
     }, []);
 
+    const user = useSelector((state) => state.user.user);
+
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={user ? <Portal /> : <Login />} />
                 <Route exact path="/signup" element={<Signup />} />
+                <Route exact path="/portal" element={<Portal />} />
+                <Route exact path="/profile" element={<Profile />} />
                 {/* <Route path="/login" element={<LogIn />} />
                 <Route path="/admin" element={user ? <Admin /> : <Home />} />
                 <Route path="/book" element={user ? <HomeBook /> : <LogIn />} />

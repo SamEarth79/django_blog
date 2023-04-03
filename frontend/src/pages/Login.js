@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Nav from "../components/Nav";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../features/userSlice";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -9,16 +11,20 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const logIn = () => {
+    const dispatch = useDispatch();
+
+    const logIn = async () => {
         let loginCred = {
             email,
             password,
         };
-        axios
+        await axios
             .post("http://127.0.0.1:8000/login", loginCred)
             .then((res) => {
                 console.log(res);
-                alert("login success");
+                console.log(res.data.currUser);
+                dispatch(authActions.login(res.data.currUser));
+                navigate("/portal");
             })
             .catch((err) => {
                 console.error(err);
