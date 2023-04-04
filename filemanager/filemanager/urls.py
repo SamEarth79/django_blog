@@ -15,13 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# from django.conf.urls import urls
-from file.views import FileView
-from users.views import UserView, LogInView
+from django.conf import settings
+from django.conf.urls.static import static
+from users.views import UserView, LogInView, ProfileView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', FileView.as_view(), name="anything "),
     path('signup', UserView.as_view(), name="users "),
-    path('login', LogInView.as_view(), name="login ")
-]
+    path('login', LogInView.as_view(), name="login "),
+    path('profile', ProfileView.as_view(), name="profile "),
+    path('', include('files.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

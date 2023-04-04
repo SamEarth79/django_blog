@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .models import User
-from .serializers import UserSerializer, LogInSerializer
+from .serializers import UserSerializer, LogInSerializer, ProfileSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -39,8 +39,8 @@ def validateCredentials(data):
 
 class UserView(APIView):
     def get(self, request):
-        output = [{"email": output.email, "password": output.password,
-                   "phone": output.phone} for output in User.objects.all()]
+        output = [{"email": output.email, "phone": output.phone, "password": output.password}
+                  for output in User.objects.all()]
         return Response(output)
 
     def post(self, request):
@@ -57,27 +57,26 @@ class UserView(APIView):
             serializer.save()
             return Response({"allGood": "success", "data": serializer.data}, status=status.HTTP_200_OK)
 
-    def put(self, request):
-        serializer = UserSerializer(data=request.data)
-        User.objects.filter(request.data['email']).update(
-            phone=request.data['phone'])
+    # def put(self, request):
+    #     serializer = UserSerializer(data=request.data)
+    #     User.objects.filter(request.data['email']).update(
+    #         phone=request.data['phone'])
 
-        print(User.objects.all().values())
-        if serializer.is_valid(raise_exception=True):
-            return Response({"allGood": "success", "data": serializer.data, "currUser": {"email": request.data.email, "phone": request.data.phone}}, status=status.HTTP_200_OK)
+    #     print(User.objects.all().values())
+    #     if serializer.is_valid(raise_exception=True):
+    #         return Response({"allGood": "success", "data": serializer.data, "currUser": {"email": request.data.email, "phone": request.data.phone}}, status=status.HTTP_200_OK)
 
 
 class LogInView(APIView):
 
     def get(self, request):
-        output = [{"email": output.email, "password": output.password,
-                   "phone": output.phone} for output in User.objects.all()]
+        output = [{"email": output.email, "phone": output.phone}
+                  for output in User.objects.all()]
         return Response(output)
 
     def post(self, request):
         serializer = LogInSerializer(data=request.data)
         isValidCredentials, msg = validateCredentials(request.data)
-
         if not isValidCredentials:
             returnMsg = {
                 'msg': msg
@@ -86,3 +85,23 @@ class LogInView(APIView):
 
         if serializer.is_valid(raise_exception=True):
             return Response({"allGood": "success", "data": serializer.data, "currUser": {"email": msg.email, "phone": msg.phone}}, status=status.HTTP_200_OK)
+
+
+class ProfileView(APIView):
+    def get(self, request):
+        output = [{"email": output.email, "phone": output.phone}
+                  for output in User.objects.all()]
+        return Response(output)
+
+    def post(self, request):
+        serializer = ProfileSerializer(data=request.data)
+
+        User.objects.all().filter(
+            email=request.data['email']).update(phone=request.data['phone'])
+
+        user = User.objects.all().get(email=request.data['email'])
+
+        print(User.objects.all().values())
+
+        if serializer.is_valid(raise_exception=True):
+            return Response({"allGood": "success", "data": serializer.data}, status=status.HTTP_200_OK)

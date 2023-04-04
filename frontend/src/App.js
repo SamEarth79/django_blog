@@ -6,6 +6,7 @@ import Portal from "./pages/Portal";
 import Profile from "./pages/Profile";
 import Signup from "./pages/Signup";
 import { useSelector } from "react-redux";
+import Upload from "./pages/Upload";
 
 function App() {
     const [files, setFiles] = useState([]);
@@ -56,7 +57,16 @@ function App() {
                 <Route path="/" element={user ? <Portal /> : <Login />} />
                 <Route exact path="/signup" element={<Signup />} />
                 <Route exact path="/portal" element={<Portal />} />
-                <Route exact path="/profile" element={<Profile />} />
+                <Route
+                    exact
+                    path="/profile"
+                    element={user ? <Profile /> : <Login />}
+                />
+                <Route
+                    exact
+                    path="/upload"
+                    element={user ? <Upload /> : <Login />}
+                />
                 {/* <Route path="/login" element={<LogIn />} />
                 <Route path="/admin" element={user ? <Admin /> : <Home />} />
                 <Route path="/book" element={user ? <HomeBook /> : <LogIn />} />
