@@ -43,15 +43,11 @@ const Profile = () => {
                 <div className="flex flex-col gap-4 items-start h-3/6 w-fit mx-auto justify-center">
                     <div className="flex gap-4 items-center">
                         <p className="text-xl font-semibold">Email</p>{" "}
-                        <span className="text-xl text-slate-500">
-                            <input
-                                type="text"
-                                defaultValue={email}
-                                className="w-80"
-                            />
+                        <span className="text-xl text-slate-500 p-2">
+                            {email}
                         </span>
                     </div>
-                    <div className="flex gap-4 items-center">
+                    <div className="flex gap-4 items-center mb-10">
                         <p className="text-xl font-semibold">Phone</p>{" "}
                         <span className="text-xl text-slate-500">
                             <input
@@ -63,11 +59,12 @@ const Profile = () => {
                                     ).disabled = false;
                                     setPhone(e.target.value);
                                 }}
+                                className={"border-2 rounded-md p-2"}
                             />
                         </span>
                     </div>
                     <button
-                        className="update_button w-fit mx-auto text-lg border-2 border-orange-500 rounded-lg px-4 py-2 disabled:bg-slate-400 disabled:text-slate-800 disabled:border-0"
+                        className="update_button drop-shadow-lg w-fit mx-auto text-lg border-2 border-orange-500 rounded-lg px-4 py-2 disabled:bg-slate-400 disabled:text-slate-800 disabled:border-0"
                         onClick={updateUser}
                     >
                         Update

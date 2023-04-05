@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Nav from "../components/Nav";
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 const Upload = () => {
     const [filename, setFilename] = useState("");
     const [files, setFiles] = useState([]);
+    const user = useSelector((state) => state.user.user);
 
     const uploadFile = async () => {
+        let currUser = {
+            email: user.email,
+            password: user.password,
+            conf_password: user.conf_password,
+            phone: user.phone,
+        };
+        console.log(currUser);
+
         let formData = new FormData();
         formData.append("FILE", filename);
+        formData.append("user", user.email);
 
         const values = [...formData.entries()];
         console.log(values);
@@ -38,7 +49,11 @@ const Upload = () => {
             .then((res) => {
                 const data = res.data;
                 console.log(data);
-                setFiles(data);
+                const myFiles = data.filter((file) => {
+                    return file.user === user.email;
+                });
+                console.log(myFiles);
+                setFiles(myFiles);
             })
             .catch((err) => {
                 console.error(err);
@@ -99,26 +114,53 @@ const Upload = () => {
                 </div>
                 <div className="mt-20">
                     <h1 className="text-5xl font-semibold text-gray-500">
-                        Uploaded files
+                        Files uploaded by you
                     </h1>
                     <div className="w-fit mx-auto py-10">
-                        {files.map((file, index) => {
-                            let split = String(file.FILE).split("/");
-                            let filename = split[split.length - 1];
-                            // console.log(filename);
-                            // console.log(typeof filename);
-                            return (
-                                <div className="" key={index}>
-                                    <h1
-                                        onClick={(e) => {
-                                            downloadFile(file.FILE, file.id);
-                                        }}
-                                    >
-                                        {filename}
-                                    </h1>
-                                </div>
-                            );
-                        })}
+                        <table>
+                            <tr>
+                                <th className="text-xl font-bold p-2 border-2 border-orange-300">
+                                    Filename
+                                </th>
+                                <th className="text-xl font-bold p-2 border-2 border-orange-300">
+                                    Extension
+                                </th>
+                                <th className="text-xl font-bold p-2 border-2 border-orange-300">
+                                    Date
+                                </th>
+                            </tr>
+                            {files.map((file, index) => {
+                                let split = String(file.FILE).split("/");
+                                let filename = split[split.length - 1];
+
+                                let ext_split = filename.split(".");
+                                let ext = ext_split[ext_split.length - 1];
+                                return (
+                                    <tr className="" key={index}>
+                                        <td
+                                            onClick={(e) => {
+                                                downloadFile(
+                                                    file.FILE,
+                                                    file.id
+                                                );
+                                            }}
+                                            className="p-2 border border-orange-200"
+                                        >
+                                            {filename}
+                                        </td>
+                                        <td className="p-2 border border-orange-200">
+                                            {ext}
+                                        </td>
+                                        <td className="p-2 border border-orange-200">
+                                            {`${String(file.uploaded_on).slice(
+                                                0,
+                                                10
+                                            )}`}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </table>
                     </div>
                 </div>
             </div>
